@@ -1,0 +1,48 @@
+.View{
+  min-height: 100vh;
+  background-color: #000;
+  color: #fff;
+  padding-bottom: 60px;
+  .title{
+    text-align: center;
+    padding: 35px 0 45px;
+  }
+  .img{
+    width: 311px;
+    height: 309px;
+    margin: 0 auto;
+  }
+  .card{
+    background-color: #fff;
+    border-radius: 22px;
+    margin: -140px auto 0;
+    min-height: 40vh;
+    color: #222;
+    padding-top: 160px;
+    .v-title{
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .desc{
+      font-size: 12px;
+      color: #A8A8A8;
+      text-align: center;
+      margin-top: 5px;
+    }
+  }
+
+}
+.player{
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  .duration,.currentTime{
+    width: 70px;
+    font-size: 12px;
+    color: #aaa;
+  }
+  .duration{
+    text-align: right;
+  }
+}
