@@ -37,6 +37,7 @@
   padding: 0 10px;
   display: flex;
   align-items: center;
+  margin-top: 16px;
   .duration,.currentTime{
     width: 70px;
     font-size: 12px;
@@ -45,4 +46,11 @@
   .duration{
     text-align: right;
   }
+}
+.play-control {
+  width: 100px;
+  border: 1px solid red;
+  margin: 0 auto;
+  margin-top: 24px;
+  text-align: center;
 }

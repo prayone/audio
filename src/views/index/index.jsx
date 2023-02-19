@@ -1,5 +1,5 @@
 
-import {useEffect,useState,useRef,createContext} from 'react'
+import {useEffect,useState,createContext} from 'react'
 import './index.scss'
 import bg from "../../assets/bg.png";
 import {Desc} from './info'
@@ -8,12 +8,9 @@ import {course_play} from '../../api'
 export const AudioContext = createContext({})
 export default function IndexPage(){
   const [infoObj,setinfoObj] = useState({})
-  const code = infoObj.code
 
-  const [currentAudio,setCurrentAudio] = useState({})
-
-
-  let player = useRef(null);
+  const  [player, setPlayer] = useState(null);
+  const  [curAudio, setCurAudio] = useState({});
 
   useEffect(() => {
     get_mp3()
@@ -24,14 +21,26 @@ export default function IndexPage(){
   }
 
   const initPlay = ()=>{
-     player = new Audio(infoObj.url)
+     const player = new Audio(infoObj.url)
      player.ontimeupdate = () => {
-        setCurrentAudio({
-          currentTime : player.currentTime,
+        setCurAudio({
+          ...curAudio,
+          currentTime:player.currentTime,
           duration : player.duration,
-          percent: +((player.currentTime / player.duration) *100).toFixed(2)
         })
       };
+
+    player.loop = true;
+    player.oncanplay = () => {
+      console.log('oncanplay,ready')
+      setCurAudio({
+        duration : player.duration,
+      })
+    };
+    player.onended = () => {
+      player.pause()
+    };
+    setPlayer(player)
   }
   useEffect(()=>{
     if(infoObj?.url) {
@@ -40,29 +49,40 @@ export default function IndexPage(){
   },[infoObj?.url])
 
   const play = ()=>{
-    console.log(player)
     player.play()
   }
+
+  /**
+   * 这里必须等player加载完毕才能允许触发
+   */
   const chagePlay = (val)=>{
-    console.log(val,'val--------')
-    const currentTime = player.duration * (val / 100);
-    player.currentTime = currentTime;
+    const currentTime = curAudio.duration * (val / 100) || 0;
+    if(player && currentTime) {
+      player.currentTime = currentTime;
+    }
   }
   const get_mp3 = async()=>{
     let res = await course_play({id:'176'})
     if(res.status === 1){
+      console.log('ajax load')
       setinfoObj(res.data)
     }
   }
+  const PlayAction = ()=>{
+    if(player?.paused) {
+      return <div className='play-control' onClick={()=>player?.play()}>播放</div>
+    }
+    return <div className='play-control' onClick={()=>player?.pause()}>暂停</div>
+  }
+
   return (
     <div className='View'>
       <div className="title">
-      Vol.{code}  行业大咖讲志愿填报…
+      Vol.{infoObj.code}  行业大咖讲志愿填报…
       </div>
-      <div className="play" onClick={play}>播放</div>
       <div className="img"><img src={bg} alt="bg" /></div>
-      <AudioContext.Provider value={{currentAudio,chagePlay}}>
-        <Desc code={code} chageCode={chageCode}/>
+      <AudioContext.Provider value={{curAudio, chagePlay, PlayAction}}>
+        <Desc code={infoObj.code} chageCode={chageCode}/>
       </AudioContext.Provider>
     </div>
   )
