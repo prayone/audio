@@ -1,90 +1,95 @@
+import { useEffect, useState, createContext, useRef } from "react";
+import "./index.scss";
+import { Desc } from "./info";
+import { course_play } from "../../api";
 
-import {useEffect,useState,createContext} from 'react'
-import './index.scss'
-import bg from "../../assets/bg.png";
-import {Desc} from './info'
-import {course_play} from '../../api'
+export const AudioContext = createContext({});
 
-export const AudioContext = createContext({})
-export default function IndexPage(){
-  const [infoObj,setinfoObj] = useState({})
+export default function IndexPage() {
+  const [infoObj, setinfoObj] = useState({});
 
-  const  [player, setPlayer] = useState(null);
-  const  [curAudio, setCurAudio] = useState({});
+  const [curAudio, setCurAudio] = useState({});
+  const [isPlay, setIsPlay] = useState(false);
+  const percent = useRef(0);
+  const playerRef = useRef(null);
 
   useEffect(() => {
-    get_mp3()
-  },[])
+    get_mp3();
+  }, []);
 
-  const chageCode = (code)=>{
-    setinfoObj({...infoObj, code})
-  }
+  const get_mp3 = async () => {
+    let res = await course_play({ id: "176" });
+    if (res.status === 1) {
+      setinfoObj(res.data);
+    }
+  };
+  useEffect(() => {
+    !!infoObj.url && initPlayer();
+  }, [infoObj.url]);
 
-  const initPlay = ()=>{
-     const player = new Audio(infoObj.url)
-     player.ontimeupdate = () => {
-        setCurAudio({
-          ...curAudio,
-          currentTime:player.currentTime,
-          duration : player.duration,
-        })
-      };
-
-    player.loop = true;
-    player.oncanplay = () => {
-      console.log('oncanplay,ready')
+  // 初始化audio
+  const initPlayer = () => {
+    const player = new Audio(infoObj.url);
+    player.ontimeupdate = () => {
       setCurAudio({
-        duration : player.duration,
-      })
+        currentTime: player.currentTime,
+        duration: player.duration,
+      });
+      percent.current = +((player.currentTime / player.duration) * 100).toFixed(
+        2
+      );
     };
-    player.onended = () => {
-      player.pause()
+    // 音频加载完设置：视频总长
+    player.oncanplay = () => {
+      setCurAudio({
+        currentTime: player.currentTime,
+        duration: player.duration,
+      });
     };
-    setPlayer(player)
-  }
-  useEffect(()=>{
-    if(infoObj?.url) {
-      initPlay();
-    }
-  },[infoObj?.url])
-
-  const play = ()=>{
-    player.play()
-  }
-
-  /**
-   * 这里必须等player加载完毕才能允许触发
-   */
-  const chagePlay = (val)=>{
-    const currentTime = curAudio.duration * (val / 100) || 0;
-    if(player && currentTime) {
-      player.currentTime = currentTime;
-    }
-  }
-  const get_mp3 = async()=>{
-    let res = await course_play({id:'176'})
-    if(res.status === 1){
-      console.log('ajax load')
-      setinfoObj(res.data)
-    }
-  }
-  const PlayAction = ()=>{
-    if(player?.paused) {
-      return <div className='play-control' onClick={()=>player?.play()}>播放</div>
-    }
-    return <div className='play-control' onClick={()=>player?.pause()}>暂停</div>
-  }
+    playerRef.current = player;
+  };
+  // 改变拖动条
+  const setCurTime = (value) => {
+    const currentTime = playerRef.current.duration * (value / 100);
+    playerRef.current.currentTime = currentTime;
+    setCurAudio({
+      currentTime,
+      duration: playerRef.current.duration,
+    });
+  };
+  // 暂停、播放动作
+  const playPause = (info) => {
+    const isInfo = info === "play";
+    setIsPlay(isInfo);
+    isInfo ? playerRef.current.play() : playerRef.current.pause();
+  };
+  // 改变速率
+  const chageRate = (val) => {
+    console.log(val, "rate-----");
+    playerRef.current.playbackRate = val;
+  };
 
   return (
-    <div className='View'>
-      <div className="title">
-      Vol.{infoObj.code}  行业大咖讲志愿填报…
+    !!infoObj.image && (
+      <div className="View">
+        <div className="title">Vol.{infoObj.code} 行业大咖讲志愿填报…</div>
+        <div className="img">
+          <img src={infoObj.image} alt="bg" />
+        </div>
+        <AudioContext.Provider
+          value={{
+            curAudio,
+            infoObj,
+            playPause,
+            isPlay,
+            percent,
+            setCurTime,
+            chageRate,
+          }}
+        >
+          <Desc />
+        </AudioContext.Provider>
       </div>
-      <div className="img"><img src={bg} alt="bg" /></div>
-      <AudioContext.Provider value={{curAudio, chagePlay, PlayAction}}>
-        <Desc code={infoObj.code} chageCode={chageCode}/>
-      </AudioContext.Provider>
-    </div>
-  )
+    )
+  );
 }
-

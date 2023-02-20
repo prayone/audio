@@ -16,11 +16,11 @@ export default async function ajax(options) {
   });
   init.interceptors.response.use(
     (respones) => {
-      if (respones.status == 200) {
+      if (respones.status === 200) {
         let res = respones.data;
-        if (res.status == 1) {
+        if (res.status === 1) {
           return respones.data;
-        } else if (res.status == 6) {
+        } else if (res.status === 6) {
           return respones.data;
         } else {
           if (res.message) {

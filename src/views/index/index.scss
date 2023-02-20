@@ -16,9 +16,9 @@
     background-color: #fff;
     border-radius: 22px;
     margin: -140px auto 0;
-    min-height: 40vh;
     color: #222;
     padding-top: 160px;
+    padding-bottom: 40px;
     .v-title{
       text-align: center;
       font-size: 20px;
@@ -33,12 +33,12 @@
   }
 
 }
-.player{
+.play-slider{
   padding: 0 10px;
   display: flex;
   align-items: center;
   margin-top: 16px;
-  .duration,.currentTime{
+  .duration,.cur-time{
     width: 70px;
     font-size: 12px;
     color: #aaa;
@@ -47,10 +47,29 @@
     text-align: right;
   }
 }
-.play-control {
-  width: 100px;
-  border: 1px solid red;
-  margin: 0 auto;
-  margin-top: 24px;
-  text-align: center;
+.paly-cont{
+  .play-pause{
+    width: 70px;
+    height: 70px;
+    margin: 40px auto 0;
+  }
+}
+.play-rate{
+  padding: 22px 15px 18px;
+  display: flex;
+  align-items: center;
+  justify-content:space-between;
+  .rate{
+    width: 53px;
+    height: 24px;
+    border-radius: 20px;
+    background: rgba(168, 168, 168, 0.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #d0d2d5;
+    margin: 0 14px;
+  }
+
 }
