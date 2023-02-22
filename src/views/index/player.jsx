@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AudioContext } from "./index";
 import { Slider } from "react-vant";
 import play from "../../assets/play.png";
@@ -13,17 +13,27 @@ const rateList = [
 ];
 
 const Player = () => {
+  const [flag, setFlag] = useState(1);
+
   const { curAudio, playPause, isPlay, percent, setCurTime, chageRate } =
     useContext(AudioContext);
   return (
     <div className="paly-cont">
+      <div className="rate-desc">
+        <div className="r-left"></div>
+        <div className="r-center">倍速播放</div>
+        <div className="r-right"></div>
+      </div>
       <div className="play-rate">
         {rateList.map((item) => {
           return (
             <div
-              className="rate"
+              className={`rate ${item.val === flag ? "active" : null}`}
               key={item.text}
-              onClick={() => chageRate(item.val)}
+              onClick={() => {
+                setFlag(item.val);
+                chageRate(item.val);
+              }}
             >
               {item.text}
             </div>

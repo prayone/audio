@@ -55,7 +55,7 @@
   }
 }
 .play-rate{
-  padding: 22px 15px 18px;
+  padding: 0px 15px 18px;
   display: flex;
   align-items: center;
   justify-content:space-between;
@@ -71,5 +71,46 @@
     color: #d0d2d5;
     margin: 0 14px;
   }
+  .active{
+    background: #FDE3E3;
+    color: #F58181;
+  }
 
+}
+.rate-desc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 25px 0 15px;
+  font-size: 12px;
+  .r-center {
+    margin: 0 10px;
+    color: #a8a8a8;
+  }
+  .r-left {
+    border-top: 1px solid #fde3e3;
+    width: 99px;
+    position: relative;
+    &:after {
+      position: absolute;
+      left: 0;
+      top: 0;
+      content: "";
+      height: 7px;
+      border-left: 1px solid #fde3e3;
+    }
+  }
+  .r-right {
+    border-top: 1px solid #fde3e3;
+    width: 99px;
+    position: relative;
+    &:after {
+      right: 0;
+      top: 0;
+      position: absolute;
+      content: "";
+      height: 7px;
+      border-right: 1px solid #fde3e3;
+    }
+  }
 }

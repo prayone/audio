@@ -24,30 +24,31 @@ export default function IndexPage() {
     }
   };
   useEffect(() => {
+    // 初始化audio
+    const initPlayer = () => {
+      const player = new Audio(infoObj.url);
+      player.ontimeupdate = () => {
+        setCurAudio({
+          currentTime: player.currentTime,
+          duration: player.duration,
+        });
+        percent.current = +(
+          (player.currentTime / player.duration) *
+          100
+        ).toFixed(2);
+      };
+      // 音频加载完设置：视频总长
+      player.oncanplay = () => {
+        setCurAudio({
+          currentTime: player.currentTime,
+          duration: player.duration,
+        });
+      };
+      playerRef.current = player;
+    };
     !!infoObj.url && initPlayer();
   }, [infoObj.url]);
 
-  // 初始化audio
-  const initPlayer = () => {
-    const player = new Audio(infoObj.url);
-    player.ontimeupdate = () => {
-      setCurAudio({
-        currentTime: player.currentTime,
-        duration: player.duration,
-      });
-      percent.current = +((player.currentTime / player.duration) * 100).toFixed(
-        2
-      );
-    };
-    // 音频加载完设置：视频总长
-    player.oncanplay = () => {
-      setCurAudio({
-        currentTime: player.currentTime,
-        duration: player.duration,
-      });
-    };
-    playerRef.current = player;
-  };
   // 改变拖动条
   const setCurTime = (value) => {
     const currentTime = playerRef.current.duration * (value / 100);
